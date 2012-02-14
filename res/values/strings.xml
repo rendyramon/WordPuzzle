@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WordPuzzle</string>
+    <string name="main_title">Word Puzzle</string>
+    <string name="game_label">Puzzle List</string>
+    <string name="setting_label">Setting</string>
+    <string name="create_label">Create Puzzle</string>
+    <string name="empty_text">No Game Exists</string>
+
+</resources>
