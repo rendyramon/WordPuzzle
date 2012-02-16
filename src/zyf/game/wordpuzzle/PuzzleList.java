@@ -66,7 +66,7 @@ public class PuzzleList extends ListActivity {
 		SQLiteDatabase db = puzzles.getWritableDatabase();
 		ContentValues values = new ContentValues();
 		values.put(PuzzleListDDL.CREATED, "2012-02-11 00:00:00");
-		values.put(PuzzleListDDL.CONTENT, "* *   *  *    * ** ** ****        *  ** *** * *    *   ** ** ** **        ** **  * *   *  *    * *  ");
+		values.put(PuzzleListDDL.CONTENT, "* *   *  *    * ** ** ****        *  ** *** * *    *   ** ** ** **        ** **  * *   *  *    * * *");
 		values.put(PuzzleListDDL.SIZE, 10);
 		values.put(PuzzleListDDL.LANGUAGE, "Chinese");
 		values.put(PuzzleListDDL.DESCRIPTION, "第二个游戏");

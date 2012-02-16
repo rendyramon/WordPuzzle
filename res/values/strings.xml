@@ -6,5 +6,14 @@
     <string name="setting_label">Setting</string>
     <string name="create_label">Create Puzzle</string>
     <string name="empty_text">No Game Exists</string>
+    <style name="title_background"> 
+    	<item name="android:background">@color/light</item> 
+	</style>
+    <style name="puzzle_title" parent="android:Theme"> 
+    	<item name="android:windowTitleSize">50dp</item> 
+    	<item name="android:windowTitleBackgroundStyle">@style/title_background</item>
+	</style>
+    <string name="back_label">Back</string>
+    <string name="submit_label">Submit</string>
 
 </resources>

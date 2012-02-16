@@ -12,6 +12,7 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.Window;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
@@ -52,7 +53,9 @@ public class PuzzleActivity extends Activity implements OnTouchListener, OnGestu
 		Log.d(TAG, "puzzle_id " + puzzle_id);
 		initPuzzle();
 		mGestureDetector = new GestureDetector((OnGestureListener) this);
+		this.requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.puzzle);
+		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.puzzle_title);
 		// set square puzzleView below TextViews which show word description
 		LinearLayout puzzle_layout = (LinearLayout) findViewById(R.id.puzzle_layout);
 		puzzle_view = new PuzzleView(this);
@@ -67,6 +70,8 @@ public class PuzzleActivity extends Activity implements OnTouchListener, OnGestu
 		setWordDesc(selX, selY);
 		word_desc_view.setOnTouchListener(this);
 		word_desc_view.setClickable(true);
+		
+		// TBD set button listener for title button
 	}
 	
 	@Override
