@@ -1,7 +1,10 @@
 package zyf.game.wordpuzzle;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -11,17 +14,19 @@ import android.view.GestureDetector.OnGestureListener;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
-public class PuzzleActivity extends Activity implements OnTouchListener, OnGestureListener{
+public class PuzzleActivity extends Activity implements OnTouchListener, OnGestureListener, OnClickListener{
 
 	private PuzzleView puzzle_view;
 	private PuzzleData puzzle_data; // puzzle database
@@ -71,7 +76,11 @@ public class PuzzleActivity extends Activity implements OnTouchListener, OnGestu
 		word_desc_view.setOnTouchListener(this);
 		word_desc_view.setClickable(true);
 		
-		// TBD set button listener for title button
+		//set button listener for title button
+		Button back_button = (Button) findViewById(R.id.back);
+		back_button.setOnClickListener(this);
+		Button submit_button = (Button) findViewById(R.id.submit);
+		submit_button.setOnClickListener(this);
 	}
 	
 	@Override
@@ -302,4 +311,26 @@ public class PuzzleActivity extends Activity implements OnTouchListener, OnGestu
         outToRight.setInterpolator(new AccelerateInterpolator());
         return outToRight;
 	}
+
+	public void puzzle_check(){
+		
+	}
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.back:
+			AlertDialog.Builder confirm_builder = new Builder(this);
+			confirm_builder.setMessage(R.string.back_dialog_text);
+			confirm_builder.setPositiveButton(R.string.confirm_text, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int item) {
+					PuzzleActivity.this.finish();
+				}
+			});
+			confirm_builder.setNegativeButton(R.string.cancel_text, null);
+			confirm_builder.show();
+		case R.id.submit:
+			puzzle_check();
+		}
+	}
+	
 }

@@ -10,10 +10,12 @@
     	<item name="android:background">@color/light</item> 
 	</style>
     <style name="puzzle_title" parent="android:Theme"> 
-    	<item name="android:windowTitleSize">50dp</item> 
+    	<item name="android:windowTitleSize">40dp</item> 
     	<item name="android:windowTitleBackgroundStyle">@style/title_background</item>
 	</style>
     <string name="back_label">Back</string>
     <string name="submit_label">Submit</string>
-
+    <string name="back_dialog_text">Are you sure you want to quit the game?</string>
+    <string name="confirm_text">Confirm</string>
+    <string name="cancel_text">Cancel</string>
 </resources>
