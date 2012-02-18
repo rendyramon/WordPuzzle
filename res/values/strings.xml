@@ -18,4 +18,6 @@
     <string name="back_dialog_text">Are you sure you want to quit the game?</string>
     <string name="confirm_text">Confirm</string>
     <string name="cancel_text">Cancel</string>
+    <string name="score_prompt">Your score is : </string>
+    <string name="show_result_prompt">Do you want to see the correct answer ?</string>
 </resources>

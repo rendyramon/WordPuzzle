@@ -56,7 +56,9 @@ public final class R {
         public static final int empty_text=0x7f050005;
         public static final int game_label=0x7f050002;
         public static final int main_title=0x7f050001;
+        public static final int score_prompt=0x7f05000b;
         public static final int setting_label=0x7f050003;
+        public static final int show_result_prompt=0x7f05000c;
         public static final int submit_label=0x7f050007;
     }
     public static final class style {

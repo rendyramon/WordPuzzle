@@ -69,7 +69,7 @@ public class PuzzleList extends ListActivity {
 		values.put(PuzzleListDDL.CONTENT, "* *   *  *    * ** ** ****        *  ** *** * *    *   ** ** ** **        ** **  * *   *  *    * * *");
 		values.put(PuzzleListDDL.SIZE, 10);
 		values.put(PuzzleListDDL.LANGUAGE, "Chinese");
-		values.put(PuzzleListDDL.DESCRIPTION, "第二个游戏");
+		values.put(PuzzleListDDL.DESCRIPTION, "一种最常见的建筑材料，多呈现灰绿色或棕色的粉末");
 		db.insertOrThrow(PuzzleListDDL.TABLE_NAME, null, values);
 		
 		SQLiteDatabase rdb = puzzles.getReadableDatabase();
@@ -80,7 +80,7 @@ public class PuzzleList extends ListActivity {
 			Log.d(TAG, String.valueOf(id));
 		}
 		String[] desc = {"癫痫病的通俗叫法",
-				"一种最常见的建筑材料，多呈现灰绿色或棕色的粉末","用石灰石、黏土等加工制成，加水搅拌，干燥后变得坚硬",
+				"一种最常见的建筑材料，多呈现灰绿色或棕色的粉末, 用石灰石、黏土等加工制成，加水搅拌，干燥后变得坚硬",
 				"我国的象征性建筑，全长6300米",
 				"成语。比喻知音或乐曲高妙",
 				"成语。比喻不必要的忧虑。传说有一个生活在杞国的人，整天担心天塌下来，愁得吃不下饭，睡不好觉",

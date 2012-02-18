@@ -41,6 +41,7 @@ public class PuzzleActivity extends Activity implements OnTouchListener, OnGestu
 	private int puzzle_size;
 	private int selX = -1;
 	private int selY = -1;
+	private boolean is_finish = false;
 	
 	private TextView horizontal_text, vertical_text;
 	private ViewFlipper word_desc_view;
@@ -86,6 +87,12 @@ public class PuzzleActivity extends Activity implements OnTouchListener, OnGestu
 	@Override
 	protected void onPause() {
 		super.onPause();
+		if (is_finish) {
+			for (int i = 0; i < puzzle_content.length; ++i){
+				if (puzzle_content[i] != '*')
+					puzzle_content[i] = ' ';
+			}
+		}
 		SQLiteDatabase db = puzzle_data.getWritableDatabase();
 		ContentValues cv = new ContentValues();
 		cv.put(PuzzleListDDL.CONTENT, new String(puzzle_content));
@@ -172,7 +179,7 @@ public class PuzzleActivity extends Activity implements OnTouchListener, OnGestu
 		String text = "";
 		Log.d(TAG, "x=" + String.valueOf(x) + ";y=" + String.valueOf(y));
 		SQLiteDatabase db = puzzle_data.getReadableDatabase();
-		String[] From = {WordDescDDL.DESCRIPTION,
+		String[] from = {WordDescDDL.DESCRIPTION,
 						 WordDescDDL.LENGTH, 
 						 WordDescDDL.STARTX, 
 						 WordDescDDL.STARTY};
@@ -180,7 +187,7 @@ public class PuzzleActivity extends Activity implements OnTouchListener, OnGestu
 				+ " AND " + WordDescDDL.LATITUDE + "= ";
 		
 		// find horizontal word description
-		Cursor cursor = db.query(WordDescDDL.TABLE_NAME, From, 				
+		Cursor cursor = db.query(WordDescDDL.TABLE_NAME, from, 				
 				selection + String.valueOf(0), null, null, null, null);
 		while (cursor.moveToNext()) {
 			if (y == cursor.getInt(3) 
@@ -196,7 +203,7 @@ public class PuzzleActivity extends Activity implements OnTouchListener, OnGestu
 		}
 		text = "";
 		// find vertical word description
-		cursor = db.query(WordDescDDL.TABLE_NAME, From, 				
+		cursor = db.query(WordDescDDL.TABLE_NAME, from, 				
 				selection + String.valueOf(1), null, null, null, null);
 		
 		while (cursor.moveToNext()) {
@@ -313,8 +320,81 @@ public class PuzzleActivity extends Activity implements OnTouchListener, OnGestu
 	}
 
 	public void puzzle_check(){
+		SQLiteDatabase db = puzzle_data.getReadableDatabase();
+		String [] from = { WordDescDDL.CONTENT,
+						   WordDescDDL.LENGTH,
+						   WordDescDDL.STARTX,
+						   WordDescDDL.STARTY};
+		String selection = WordDescDDL.PUZZLEID + " = " + String.valueOf(puzzle_id)
+				+ " AND " + WordDescDDL.LATITUDE + "= ";
 		
+		int x, y;
+		String word;
+		int total = 0;
+		int error = 0;
+		// check horizontal words
+		Cursor cursor = db.query(WordDescDDL.TABLE_NAME, from, 				
+				selection + String.valueOf(0), null, null, null, null);
+		while (cursor.moveToNext()) {
+			x = cursor.getInt(2);
+			y = cursor.getInt(3);
+			word = cursor.getString(0);
+			for (int i = 0; i < cursor.getInt(1); ++i) {
+				if(puzzle_content[x+i + y * puzzle_size] != word.charAt(i)) {
+					error++;
+				}
+				total++;
+			}
+		}
+		cursor.close();
+		// check vertical words
+		cursor = db.query(WordDescDDL.TABLE_NAME, from, 				
+				selection + String.valueOf(1), null, null, null, null);
+		while (cursor.moveToNext()) {
+			x = cursor.getInt(2);
+			y = cursor.getInt(3);
+			word = cursor.getString(0);
+			for (int i = 0; i < cursor.getInt(1); ++i) { 
+				if(puzzle_content[x + puzzle_size * (y+i)] != word.charAt(i)) {
+					error++;
+					puzzle_content[x + puzzle_size * (y+i)] = word.charAt(i);
+				}
+				total++;
+			}
+		}
+		cursor.close();
+		
+		cursor = db.query(WordDescDDL.TABLE_NAME, from, 				
+				selection + String.valueOf(0), null, null, null, null);
+		while (cursor.moveToNext()) {
+			x = cursor.getInt(2);
+			y = cursor.getInt(3);
+			word = cursor.getString(0);
+			for (int i = 0; i < cursor.getInt(1); ++i) {
+				puzzle_content[x+i + y * puzzle_size] = word.charAt(i);
+			}
+		}
+		
+		cursor.close();
+		AlertDialog.Builder score_builder = new Builder(this);
+		score_builder.setMessage(getText(R.string.score_prompt) 
+				+ String.valueOf((total - error) * 100 / total)
+				+ "\n" + getText(R.string.show_result_prompt));
+		score_builder.setPositiveButton(R.string.confirm_text, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int item) {
+				puzzle_view.invalidate();
+			}
+		});
+		score_builder.setNegativeButton(R.string.cancel_text, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				PuzzleActivity.this.finish();
+			}
+		});
+		score_builder.show();
 	}
+	
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
@@ -328,9 +408,11 @@ public class PuzzleActivity extends Activity implements OnTouchListener, OnGestu
 			});
 			confirm_builder.setNegativeButton(R.string.cancel_text, null);
 			confirm_builder.show();
+			break;
 		case R.id.submit:
+			is_finish = true;
 			puzzle_check();
+			break;
 		}
 	}
-	
 }

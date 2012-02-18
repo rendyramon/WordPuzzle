@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -66,7 +67,7 @@ public class PuzzleView extends View {
 			canvas.drawLine(i*side, 0, i*side, view_side, i==0 || i==puzzle_size ? dark : light);
 		}
 		
-		dark.setTextSize(side * 0.75f);
+		dark.setTextSize(side * 0.70f);
 		dark.setTextScaleX(1);
 		dark.setTextAlign(Paint.Align.CENTER);
 		dark.setStyle(Style.FILL);
@@ -175,6 +176,16 @@ public class PuzzleView extends View {
 		puzzle.setTileContent(content, selX, selY, sel_latitude);
 		input.hideSoftInputFromWindow(this.getWindowToken(), 0);
 		invalidate();
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_DEL) {
+			puzzle.setTileContent(" ", selX, selY, sel_latitude);
+			invalidate();
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 	
 	@Override

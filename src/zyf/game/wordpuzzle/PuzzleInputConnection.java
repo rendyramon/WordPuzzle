@@ -17,4 +17,5 @@ public class PuzzleInputConnection extends BaseInputConnection {
 		puzzle_view.getInputContent((String) text);
 		return super.commitText(text, newCursorPosition);
 	}
+	
 }
