@@ -61,6 +61,9 @@ public class PuzzleView extends View {
 		Paint light = new Paint();
 		light.setColor(this.getResources().getColor(R.color.light));
 		
+		Paint error = new Paint();
+		error.setColor(this.getResources().getColor(R.color.error));
+		
 		int puzzle_size = puzzle.getPuzzleSize();
 		for (int i = 0; i <= puzzle_size; i++) {
 			canvas.drawLine(0, i*side, view_side, i*side, i==0 || i==puzzle_size ? dark : light);
@@ -78,8 +81,8 @@ public class PuzzleView extends View {
 		for (int i = 0; i < puzzle_size; i++) {
 			for (int j = 0; j < puzzle_size; j++) {
 				char tile = this.puzzle.getTile(i, j);
-				if (tile == '*') {
-					canvas.drawRect(i*side, j*side, (i+1)*side, (j+1)*side, dark);
+				if (tile == '*' || tile == '+') {
+					canvas.drawRect(i*side+1, j*side+1, (i+1)*side-1, (j+1)*side-1, tile == '*' ? dark : error);
 				} else {
 					canvas.drawRect(i*side+1, j*side+1, (i+1)*side-1, (j+1)*side-1, background);
 					canvas.drawText(String.valueOf(tile), i * side + x, j * side + y, dark);
@@ -163,6 +166,7 @@ public class PuzzleView extends View {
 	public boolean onTouchEvent(MotionEvent event) {
 		if (event.getAction() != MotionEvent.ACTION_DOWN)
 			return super.onTouchEvent(event);
+		puzzle.status_check();
 		int x = (int)(event.getX()/side);
 		int y = (int)(event.getY()/side);
 		if (this.puzzle.isValidTile(x, y)) {

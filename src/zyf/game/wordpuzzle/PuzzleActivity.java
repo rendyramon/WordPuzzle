@@ -12,6 +12,10 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.Gravity;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -41,7 +45,8 @@ public class PuzzleActivity extends Activity implements OnTouchListener, OnGestu
 	private int puzzle_size;
 	private int selX = -1;
 	private int selY = -1;
-	private boolean is_finish = false;
+	private enum Status {Normal, Checked, Finished};
+	private Status puzzle_status;
 	
 	private TextView horizontal_text, vertical_text;
 	private ViewFlipper word_desc_view;
@@ -87,7 +92,7 @@ public class PuzzleActivity extends Activity implements OnTouchListener, OnGestu
 	@Override
 	protected void onPause() {
 		super.onPause();
-		if (is_finish) {
+		if (puzzle_status == Status.Finished) {
 			for (int i = 0; i < puzzle_content.length; ++i){
 				if (puzzle_content[i] != '*')
 					puzzle_content[i] = ' ';
@@ -319,7 +324,7 @@ public class PuzzleActivity extends Activity implements OnTouchListener, OnGestu
         return outToRight;
 	}
 
-	public void puzzle_check(){
+	public void puzzle_check() {
 		SQLiteDatabase db = puzzle_data.getReadableDatabase();
 		String [] from = { WordDescDDL.CONTENT,
 						   WordDescDDL.LENGTH,
@@ -357,7 +362,7 @@ public class PuzzleActivity extends Activity implements OnTouchListener, OnGestu
 			for (int i = 0; i < cursor.getInt(1); ++i) { 
 				if(puzzle_content[x + puzzle_size * (y+i)] != word.charAt(i)) {
 					error++;
-					puzzle_content[x + puzzle_size * (y+i)] = word.charAt(i);
+					puzzle_content[x + puzzle_size * (y+i)] = puzzle_status == Status.Finished ? word.charAt(i) : '+';
 				}
 				total++;
 			}
@@ -371,11 +376,15 @@ public class PuzzleActivity extends Activity implements OnTouchListener, OnGestu
 			y = cursor.getInt(3);
 			word = cursor.getString(0);
 			for (int i = 0; i < cursor.getInt(1); ++i) {
-				puzzle_content[x+i + y * puzzle_size] = word.charAt(i);
+				puzzle_content[x+i + y * puzzle_size] = puzzle_status == Status.Finished ? word.charAt(i) : '+';
 			}
 		}
 		
 		cursor.close();
+		if ( puzzle_status == Status.Checked) {
+			puzzle_view.invalidate();
+			return;
+		}
 		AlertDialog.Builder score_builder = new Builder(this);
 		score_builder.setMessage(getText(R.string.score_prompt) 
 				+ String.valueOf((total - error) * 100 / total)
@@ -395,24 +404,69 @@ public class PuzzleActivity extends Activity implements OnTouchListener, OnGestu
 		score_builder.show();
 	}
 	
+	public void back_to_list() {
+		AlertDialog.Builder confirm_builder = new Builder(this);
+		confirm_builder.setMessage(R.string.back_dialog_text);
+		confirm_builder.setPositiveButton(R.string.confirm_text, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int item) {
+				PuzzleActivity.this.finish();
+			}
+		});
+		confirm_builder.setNegativeButton(R.string.cancel_text, null);
+		confirm_builder.show();
+	}
+	
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.back:
-			AlertDialog.Builder confirm_builder = new Builder(this);
-			confirm_builder.setMessage(R.string.back_dialog_text);
-			confirm_builder.setPositiveButton(R.string.confirm_text, new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int item) {
-					PuzzleActivity.this.finish();
-				}
-			});
-			confirm_builder.setNegativeButton(R.string.cancel_text, null);
-			confirm_builder.show();
+			back_to_list();
 			break;
 		case R.id.submit:
-			is_finish = true;
+			puzzle_status = Status.Finished;
 			puzzle_check();
 			break;
+		}
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			back_to_list();
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		MenuInflater inflater = this.getMenuInflater();
+		inflater.inflate(R.layout.menu, menu);
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch(item.getItemId()) {
+		case R.id.menu_hint:
+			return true;
+		case R.id.menu_check:
+			puzzle_status = Status.Checked;
+			puzzle_check();
+			return true;
+		}
+		return false;
+	}
+
+	public void status_check() {
+		if (puzzle_status == Status.Checked) {
+			puzzle_status = Status.Normal;
+			for (int i = 0; i < puzzle_content.length; ++i){
+				if (puzzle_content[i] == '+')
+					puzzle_content[i] = ' ';
+			}
+			puzzle_view.invalidate();
 		}
 	}
 }

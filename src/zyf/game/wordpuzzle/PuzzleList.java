@@ -17,7 +17,7 @@ public class PuzzleList extends ListActivity {
 	private PuzzleData puzzles;
 	private static String[] FROM = {PuzzleListDDL._ID, PuzzleListDDL.CREATED, PuzzleListDDL.DESCRIPTION, };
 	private static int[] TO = {R.id.rowid, R.id.created_time, R.id.description, };
-	private static String ORDER_BY = PuzzleListDDL.CREATED + " DESC";
+	private static String ORDER_BY = PuzzleListDDL._ID + " DESC";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +65,7 @@ public class PuzzleList extends ListActivity {
 		// temp function
 		SQLiteDatabase db = puzzles.getWritableDatabase();
 		ContentValues values = new ContentValues();
-		values.put(PuzzleListDDL.CREATED, "2012-02-11 00:00:00");
+		values.put(PuzzleListDDL.CREATED, "2012-02-18 00:00:00");
 		values.put(PuzzleListDDL.CONTENT, "* *   *  *    * ** ** ****        *  ** *** * *    *   ** ** ** **        ** **  * *   *  *    * * *");
 		values.put(PuzzleListDDL.SIZE, 10);
 		values.put(PuzzleListDDL.LANGUAGE, "Chinese");

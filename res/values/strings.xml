@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">WordPuzzle</string>
-    <string name="main_title">Word Puzzle</string>
-    <string name="game_label">Puzzle List</string>
-    <string name="setting_label">Setting</string>
-    <string name="create_label">Create Puzzle</string>
     <string name="empty_text">No Game Exists</string>
     <style name="title_background"> 
     	<item name="android:background">@color/light</item> 
@@ -20,4 +16,10 @@
     <string name="cancel_text">Cancel</string>
     <string name="score_prompt">Your score is : </string>
     <string name="show_result_prompt">Do you want to see the correct answer ?</string>
+    <string name="hints_title">Hints</string>
+    <string name="hints_summary">Enable the capability to show hints during play</string>
+    <string name="setting_label">Setting</string>
+    <string name="game_label">Puzzle List</string>
+    <string name="hint_label">Hint</string>
+    <string name="check_label">Check</string>
 </resources>

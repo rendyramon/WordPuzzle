@@ -10,10 +10,16 @@
       android:layout_width="wrap_content" 
       android:layout_height="wrap_content" /> 
    <TextView
+      android:id="@+id/colon"
+      android:layout_width="wrap_content" 
+      android:text=" : "
+      android:layout_height="wrap_content" 
+      android:layout_toRightOf="@id/rowid"/> 
+   <TextView
       android:id="@+id/created_time"
       android:layout_width="wrap_content" 
       android:layout_height="wrap_content" 
-      android:layout_toRightOf="@id/rowid" /> 
+      android:layout_toRightOf="@id/colon" /> 
    <TextView
       android:id="@+id/description"
       android:layout_width="fill_parent"
