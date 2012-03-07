@@ -39,5 +39,15 @@ public class WordPuzzle extends TabActivity{
         tab_setting.setIndicator(view_setting);
         tab_setting.setContent(new Intent(WordPuzzle.this, SettingActivity.class));
         tab_host.addTab(tab_setting);
+        
+        View view_feedback = LayoutInflater.from(this).inflate(R.layout.tab_label, null);
+        ImageView img_feedback = (ImageView) view_feedback.findViewById(R.id.img);
+        img_feedback.setImageResource(R.drawable.ic_launcher);
+        TextView text_feedback = (TextView) view_feedback.findViewById(R.id.text);
+        text_feedback.setText(R.string.feedback_label);
+        TabHost.TabSpec tab_feedback = tab_host.newTabSpec("feedback");
+        tab_feedback.setIndicator(view_feedback);
+        tab_feedback.setContent(new Intent(WordPuzzle.this, Feedback.class));
+        tab_host.addTab(tab_feedback);
     }
 }

@@ -42,6 +42,7 @@ public class PuzzleActivity extends Activity implements OnTouchListener, OnGestu
 	
 	private int puzzle_id;
 	private char[] puzzle_content;
+	private char[] puzzle_flag;
 	private int puzzle_size;
 	private int selX = -1;
 	private int selY = -1;
@@ -51,6 +52,8 @@ public class PuzzleActivity extends Activity implements OnTouchListener, OnGestu
 	private TextView horizontal_text, vertical_text;
 	private ViewFlipper word_desc_view;
 	private GestureDetector mGestureDetector;
+	private Button submit_button;
+	private Button back_button;
 	
 	public PuzzleActivity() {
 		puzzle_data = new PuzzleData(this);
@@ -83,9 +86,9 @@ public class PuzzleActivity extends Activity implements OnTouchListener, OnGestu
 		word_desc_view.setClickable(true);
 		
 		//set button listener for title button
-		Button back_button = (Button) findViewById(R.id.back);
+		back_button = (Button) findViewById(R.id.back);
 		back_button.setOnClickListener(this);
-		Button submit_button = (Button) findViewById(R.id.submit);
+		submit_button = (Button) findViewById(R.id.submit);
 		submit_button.setOnClickListener(this);
 	}
 	
@@ -121,8 +124,10 @@ public class PuzzleActivity extends Activity implements OnTouchListener, OnGestu
 		if (cursor.moveToNext()) {
 			String content = cursor.getString(0);
 			puzzle_content = new char[content.length()];
+			puzzle_flag = new char[content.length()];
 			for (int i = 0; i < content.length(); i++) {
 				puzzle_content[i] = content.charAt(i);
+				puzzle_flag[i] = content.charAt(i);
 			}
 			puzzle_size = cursor.getInt(1);
 			selX = cursor.getInt(2);
@@ -147,9 +152,14 @@ public class PuzzleActivity extends Activity implements OnTouchListener, OnGestu
 		return puzzle_content[x + y * puzzle_size];
 	}
 	
+	public char getTileFlag(int x, int y) {
+		return puzzle_flag[x + y * puzzle_size];
+	}
+	
 	public boolean isValidTile(int x, int y) {
 		if (x < 0 || x >= puzzle_size || y < 0 || y >= puzzle_size ||
-				puzzle_content[x + y * puzzle_size] == '*') {
+				puzzle_content[x + y * puzzle_size] == '*' || 
+				puzzle_status == Status.Checked || puzzle_status == Status.Finished) {
 			return false;
 		}
 		return true;
@@ -362,7 +372,12 @@ public class PuzzleActivity extends Activity implements OnTouchListener, OnGestu
 			for (int i = 0; i < cursor.getInt(1); ++i) { 
 				if(puzzle_content[x + puzzle_size * (y+i)] != word.charAt(i)) {
 					error++;
-					puzzle_content[x + puzzle_size * (y+i)] = puzzle_status == Status.Finished ? word.charAt(i) : '+';
+					if (puzzle_status == Status.Finished) {
+						puzzle_content[x + puzzle_size * (y+i)] = word.charAt(i);
+					}
+					if (puzzle_status != Status.Normal){
+						puzzle_flag[x + puzzle_size * (y+i)] = '+';
+					}
 				}
 				total++;
 			}
@@ -376,7 +391,14 @@ public class PuzzleActivity extends Activity implements OnTouchListener, OnGestu
 			y = cursor.getInt(3);
 			word = cursor.getString(0);
 			for (int i = 0; i < cursor.getInt(1); ++i) {
-				puzzle_content[x+i + y * puzzle_size] = puzzle_status == Status.Finished ? word.charAt(i) : '+';
+				if(puzzle_content[x+i + y * puzzle_size] != word.charAt(i)) {
+					if (puzzle_status == Status.Finished) {
+						puzzle_content[x+i + puzzle_size * y] = word.charAt(i);
+					}
+					if (puzzle_status != Status.Normal) {
+						puzzle_flag[x+i + puzzle_size * y] = '+';
+					}
+				}
 			}
 		}
 		
@@ -425,6 +447,8 @@ public class PuzzleActivity extends Activity implements OnTouchListener, OnGestu
 		case R.id.submit:
 			puzzle_status = Status.Finished;
 			puzzle_check();
+			submit_button.setEnabled(false);
+			puzzle_view.setClickable(false);
 			break;
 		}
 	}
@@ -463,8 +487,8 @@ public class PuzzleActivity extends Activity implements OnTouchListener, OnGestu
 		if (puzzle_status == Status.Checked) {
 			puzzle_status = Status.Normal;
 			for (int i = 0; i < puzzle_content.length; ++i){
-				if (puzzle_content[i] == '+')
-					puzzle_content[i] = ' ';
+				if (puzzle_flag[i] == '+')
+					puzzle_flag[i] = ' ';
 			}
 			puzzle_view.invalidate();
 		}

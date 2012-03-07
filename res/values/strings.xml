@@ -22,4 +22,5 @@
     <string name="game_label">Puzzle List</string>
     <string name="hint_label">Hint</string>
     <string name="check_label">Check</string>
+    <string name="feedback_label">Feedback</string>
 </resources>

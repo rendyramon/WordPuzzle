@@ -81,10 +81,10 @@ public class PuzzleView extends View {
 		for (int i = 0; i < puzzle_size; i++) {
 			for (int j = 0; j < puzzle_size; j++) {
 				char tile = this.puzzle.getTile(i, j);
-				if (tile == '*' || tile == '+') {
-					canvas.drawRect(i*side+1, j*side+1, (i+1)*side-1, (j+1)*side-1, tile == '*' ? dark : error);
+				if (tile == '*') {
+					canvas.drawRect(i*side+1, j*side+1, (i+1)*side-1, (j+1)*side-1, dark);
 				} else {
-					canvas.drawRect(i*side+1, j*side+1, (i+1)*side-1, (j+1)*side-1, background);
+					canvas.drawRect(i*side+1, j*side+1, (i+1)*side-1, (j+1)*side-1, puzzle.getTileFlag(i, j) == '+' ? error : background);
 					canvas.drawText(String.valueOf(tile), i * side + x, j * side + y, dark);
 				}
 			}
@@ -178,7 +178,7 @@ public class PuzzleView extends View {
 	
 	public void getInputContent(String content) {
 		puzzle.setTileContent(content, selX, selY, sel_latitude);
-		input.hideSoftInputFromWindow(this.getWindowToken(), 0);
+		input.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
 		invalidate();
 	}
 	
